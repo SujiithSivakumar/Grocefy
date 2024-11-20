@@ -1,36 +1,46 @@
-# Step 1: Use the official PHP image with Apache
-FROM php:8.0-apache
+# Use the official PHP image with Apache and the correct PHP version
+FROM php:8.1-apache
 
-# Step 2: Install system dependencies and PHP extensions
+# Install system dependencies for PHP extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    zip \
+    libzip-dev \
+    libxml2-dev \
     git \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    curl \
+    libicu-dev \
+    zlib1g-dev \
+    libxslt1-dev \
+    libexif-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Step 3: Enable Apache mod_rewrite for Laravel's routing
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Step 4: Set the working directory inside the container
-WORKDIR /var/www/html
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    pdo_mysql \
+    zip \
+    exif \
+    && docker-php-ext-enable exif
 
-# Step 5: Copy the Laravel project files into the container
-COPY . .
-
-# Step 6: Install Composer (PHP package manager)
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Step 7: Install Laravel dependencies using Composer
-RUN composer install --no-dev --optimize-autoloader --prefer-dist
+# Set working directory
+WORKDIR /var/www/html
 
-# Step 8: Set the correct file permissions for Laravel directories
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copy the current directory contents into the container
+COPY . .
 
-# Step 9: Expose the container's port 80 (used by Apache)
+# Install Composer dependencies, ignoring the ext-exif platform requirement
+RUN composer install --no-dev --optimize-autoloader --prefer-dist --ignore-platform-req=ext-exif
+
+# Expose port 80 for the web server
 EXPOSE 80
 
-# Step 10: Start Apache in the foreground
+# Start the Apache server
 CMD ["apache2-foreground"]
