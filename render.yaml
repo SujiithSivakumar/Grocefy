@@ -12,27 +12,27 @@ services:
       # Set appropriate permissions for the storage and cache directories
       chmod -R 775 storage bootstrap/cache
     startCommand: |
-      # Start the Laravel application using PHP's built-in server
+      # Start the Laravel application using PHP's built-in server (can replace with Apache or Nginx if required)
       php artisan serve --host 0.0.0.0 --port 80
     envVars:
       - key: APP_ENV
         value: production
-      - key: APP_KEY
-        value: base64:kOH5t6DFA/W13dZWMcJIKmzV+YSVMrCcfcUmeyPuS+U=
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        value: base64:kOH5t6DFA/W13dZWMcJIKmzV+YSVMrCcfcUmeyPuS+U=  # Make sure this is your actual APP_KEY
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        value: https://api.render.com/deploy/srv-csvponij1k6c73dcbre0?key=GQ_VrKew1cw   # Replace with your actual DB host, e.g., a Render database URL or external DB server
+        value: https://api.render.com/deploy/srv-csvponij1k6c73dcbre0?key=GQ_VrKew1cw  # Replace with your actual DB host, e.g., a Render database URL or external DB server
       - key: DB_PORT
         value: 3306
       - key: DB_DATABASE
-        value: grocefy
+        value: grocefy  # Replace with your actual database name
       - key: DB_USERNAME
-        value: grocefy                   # Replace with your actual database username
+        value: grocefy  # Replace with your actual database username
       - key: DB_PASSWORD
-        value: "grocefy"                     # Replace with your actual database password, if applicable
+        value: grocefy  # Replace with your actual database password
       - key: BROADCAST_DRIVER
         value: log
       - key: CACHE_DRIVER
@@ -44,7 +44,7 @@ services:
       - key: SESSION_LIFETIME
         value: 120
       - key: REDIS_HOST
-        value: your-redis-host        # Replace with your Redis host or use the default
+        value: your-redis-host  # Replace with your Redis host or use the default
       - key: REDIS_PASSWORD
         value: null
       - key: REDIS_PORT
