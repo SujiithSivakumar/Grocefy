@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: grocefy
+    env: php
+    plan: free
+    buildCommand: |
+      # Install dependencies and configure the application
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      # Set appropriate permissions for the storage and cache directories
+      chmod -R 775 storage bootstrap/cache
+    startCommand: |
+      # Start the Laravel application using PHP's built-in server (can replace with Apache or Nginx if required)
+      php artisan serve --host 0.0.0.0 --port 80
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: YOUR_APP_KEY
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: your-database-host
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: your-database-name
+      - key: DB_USERNAME
+        value: your-database-username
+      - key: DB_PASSWORD
+        value: your-database-password
+    autoscale:
+      minInstances: 1
+      maxInstances: 3
